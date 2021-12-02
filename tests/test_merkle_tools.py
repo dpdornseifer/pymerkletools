@@ -339,3 +339,76 @@ def test_keccak_256_sorted():
                                  '868ff89bfea2cb41195ab36c8ec7793ecf8d07701bc344a2817827585d3c18ac',
                                  sorted_pairs=True)
     assert is_valid == True
+
+    flat_tree = mt.serialize_tree(mode="flat_layers")
+
+    assert flat_tree == ['00', '868ff89bfea2cb41195ab36c8ec7793ecf8d07701bc344a2817827585d3c18ac',
+                         'd9bdff55f5a7943e3d0267f5842f9063de3bc7faa4bf3e62fd96c4d5ca444aa4',
+                         '83380f9dcb8fcb4f726da70161d2eedfe1a83aa63ec457206c182eb965d7500d']
+
+
+def test_keccak_256_sorted_multi_layer():
+    mt = MerkleTools(hash_type='keccak_256')
+
+    mt.add_leaf([
+        "0b43a85d08c05252d0e23c96bc6b1bda11dfa787049ff452b3c86f4c6135e870c058c05131f199ef8619cfac937a736bbc936a667e4d96a5bf68e4056ce5fdce",
+        "004a237ea808cd9375ee9db9f85625948a890c54e2c30f736f54c969074eb56f0ff3d43dafb4b40d5d974acc1c2a68c046fa4d7c2c20cab6df956514040d0b8b",
+        "004a237ea808cd9375ee9db9f85625948a890c54e2c30f736f54c969074eb56f0ff3d43dafb4b40d5d974acc1c2a68c046fa4d7c2c20cab6df956234wdjhkde",
+        "004a237ea808cd9375ee9db9f85625948a890c54e2c30f736f54c969074eb56f0ff3d43dafb4b40d5d974acc1c2a68c046fa4d7c2c20cab6df95651dfs8f734985hjde",
+        "004a237ea808cd9375ee9db9f85625948a890c54e2c30f736f54c969074eb56f0ff3d43dafb4b40d5d974acc1c2a68c046fa4d7c2c20cab6df95651sjdw3i4euod",
+        "004a237ea808cd9375ee9db9f85625948a890c54e2c30f736f54c969074eb56f0ff3d43dafb4b40d5d974acc1c2a68c046fa4d7c2c20cfksjfsdkjfkljdf",
+        "004a237ea808cd9375ee9db9f85625948a890c54e2c30f736f54c969074eb56f0ff3d43dafb4b40d5d974acc1c2a68c046fa4d7c2c20cabdwjkd2k3kl3er"
+    ], do_hash=True)
+    mt.make_tree(sort_pairs=True)
+    assert mt.get_merkle_root() == 'b74c801b3a1baaca6ff5bdd78eb4a3183aea3a81c8433db3e2de47b6e10f13e6'
+    assert mt.get_proof(0)[0][
+               'right'] == '83380f9dcb8fcb4f726da70161d2eedfe1a83aa63ec457206c182eb965d7500d'
+    is_valid = mt.validate_proof(mt.get_proof(0),
+                                 'd9bdff55f5a7943e3d0267f5842f9063de3bc7faa4bf3e62fd96c4d5ca444aa4',
+                                 'b74c801b3a1baaca6ff5bdd78eb4a3183aea3a81c8433db3e2de47b6e10f13e6',
+                                 sorted_pairs=True)
+    assert is_valid == True
+
+    tree_flat = mt.serialize_tree(mode="flat_layers")
+
+    assert tree_flat == ["00",
+                         "b74c801b3a1baaca6ff5bdd78eb4a3183aea3a81c8433db3e2de47b6e10f13e6",
+                         "430084c7f0c2bea68c9dd906a761089bcb64cb232595455a9ce3d672c3784000",
+                         "b8534ecaa2bbae10608355278e9664ca39d3baa586fcf4686f1f4446e4d09ad2",
+                         "868ff89bfea2cb41195ab36c8ec7793ecf8d07701bc344a2817827585d3c18ac",
+                         "14e967b59d45efc87da260b45f2799868a6dd6a7dc20d54ef0eb0b6db33dd6ff",
+                         "50c35ae88f7afbefd78c28085c3062061a55b71d7d8c0fede77aa740da8f0da3",
+                         "758641652c67b14d06268f907ca16e15586be831e45dbf493c51542d0d34eb4d",
+                         "d9bdff55f5a7943e3d0267f5842f9063de3bc7faa4bf3e62fd96c4d5ca444aa4",
+                         "83380f9dcb8fcb4f726da70161d2eedfe1a83aa63ec457206c182eb965d7500d",
+                         "f4b54b1538a23cbc361bec4ec3264ca51f457552e792f5cd116553af68110d35",
+                         "4b88a63d66a0bae254c4aad756936588f8335bbce1864b80240d6e21ec791521",
+                         "46ac96420a932ac720ef0b41d01c0a95c42c998dc72a75323ff08f96986145ad",
+                         "5129e42804c36f30d3895652ef71fee2e3ef634f8750951ffce37e4105f4b68d",
+                         "758641652c67b14d06268f907ca16e15586be831e45dbf493c51542d0d34eb4d"]
+
+    tree_layers = mt.serialize_tree()
+    assert tree_layers == [
+        [
+            "d9bdff55f5a7943e3d0267f5842f9063de3bc7faa4bf3e62fd96c4d5ca444aa4",
+            "83380f9dcb8fcb4f726da70161d2eedfe1a83aa63ec457206c182eb965d7500d",
+            "f4b54b1538a23cbc361bec4ec3264ca51f457552e792f5cd116553af68110d35",
+            "4b88a63d66a0bae254c4aad756936588f8335bbce1864b80240d6e21ec791521",
+            "46ac96420a932ac720ef0b41d01c0a95c42c998dc72a75323ff08f96986145ad",
+            "5129e42804c36f30d3895652ef71fee2e3ef634f8750951ffce37e4105f4b68d",
+            "758641652c67b14d06268f907ca16e15586be831e45dbf493c51542d0d34eb4d"
+        ],
+        [
+            "868ff89bfea2cb41195ab36c8ec7793ecf8d07701bc344a2817827585d3c18ac",
+            "14e967b59d45efc87da260b45f2799868a6dd6a7dc20d54ef0eb0b6db33dd6ff",
+            "50c35ae88f7afbefd78c28085c3062061a55b71d7d8c0fede77aa740da8f0da3",
+            "758641652c67b14d06268f907ca16e15586be831e45dbf493c51542d0d34eb4d"
+        ],
+        [
+            "430084c7f0c2bea68c9dd906a761089bcb64cb232595455a9ce3d672c3784000",
+            "b8534ecaa2bbae10608355278e9664ca39d3baa586fcf4686f1f4446e4d09ad2"
+        ],
+        [
+            "b74c801b3a1baaca6ff5bdd78eb4a3183aea3a81c8433db3e2de47b6e10f13e6"
+        ]
+    ]

@@ -93,6 +93,32 @@ class MerkleTools(object):
         else:
             return None
 
+    def serialize_tree(self, mode="layers"):
+        if not self.is_ready:
+            return
+
+        if mode == "layers":
+            levels_hex = []
+
+            for level in reversed(self.levels):
+                level_hex = []
+
+                for element in level:
+                    level_hex.append(self._to_hex(element))
+
+                levels_hex.append(level_hex)
+
+            return levels_hex
+
+        if mode == "flat_layers":
+            serialized = ["00"]
+
+            for level in self.levels:
+                for element in level:
+                    serialized.append(self._to_hex(element))
+
+            return serialized
+
     def get_proof(self, index):
         if self.levels is None:
             return None
